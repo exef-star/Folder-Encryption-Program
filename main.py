@@ -9,6 +9,8 @@ import webbrowser
 import base64
 import win32api
 import win32con
+import random
+import string
 
 class FolderEncryptor(ttk.Window):
     def __init__(self):
@@ -60,12 +62,15 @@ class FolderEncryptor(ttk.Window):
         action_menu.add_command(label="重命名文件夹", command=self.rename_folder)
         action_menu.add_command(label="打包文件夹为ZIP并转换为TXT", command=self.zip_and_convert_to_txt)
         action_menu.add_command(label="更改文件夹图标", command=self.change_folder_icon)
+        action_menu.add_command(label="更改文件夹内文件（不含后缀名）为乱码", command=self.rename_filename_random)
 
         # 创建关于菜单
         about_menu = ttk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="关于", menu=about_menu)
         about_menu.add_command(label="关于本程序", command=self.about_program)
         about_menu.add_command(label="关于作者", command=self.about_author)
+        about_menu.add_command(label="查看帮助文档", command=self.help)
+        about_menu.add_command(label="查看作者的博客", command=self.blog)
 
     def about_program(self):
         messagebox.showinfo("关于本程序(❤ ω ❤)", "本程序使用 Python 3.x 编写，使用 Fernet 加密算法对文件夹进行加密和解密。\n\n加密和解密的过程都不需要用户输入密码，加密后的文件名后缀会被修改为.enc，解密后的文件名后缀会被修改为原来的后缀。\n\n程序使用 tkinter 库进行界面GUI设计，\n使用了 ttkbootstrap 库进行主题设置，并使用 PIL 库加载背景图片。")
@@ -80,6 +85,13 @@ class FolderEncryptor(ttk.Window):
 
         # 在Canvas上创建图片
         self.canvas.create_image(-150, 0, anchor=ttk.NW, image=self.photo)
+
+        # 加载图片
+        img = Image.open("image7.png")
+        self.photo2 = ImageTk.PhotoImage(img)
+
+        # 在Canvas上创建图片
+        self.canvas.create_image(750, 452, anchor=ttk.NW, image=self.photo2)
 
         # 在Canvas上创建按钮
         self.generate_key_button = ttk.Button(self, text="生成密钥文件", command=self.generate_key, bootstyle=INFO)
@@ -109,14 +121,21 @@ class FolderEncryptor(ttk.Window):
         self.zip_and_convert_button = ttk.Button(self, text="打包文件夹为ZIP转换为TXT", command=self.zip_and_convert_to_txt, bootstyle=LIGHT)
         self.canvas.create_window(650, 200, window=self.zip_and_convert_button)
 
-        self.change_icon_button = ttk.Button(self, text="更改文件夹图标", command=self.change_folder_icon, bootstyle=LIGHT)
-        self.canvas.create_window(603, 300, window=self.change_icon_button)
+        # 将文件修改为乱码
+        self.rename_filename_random_button = ttk.Button(self, text="更改文件夹内文件（不含后缀名）为乱码", command=self.rename_filename_random, bootstyle=LIGHT)
+        self.canvas.create_window(702, 300, window=self.rename_filename_random_button)
 
-        self.help_button = ttk.Button(self, text="帮助", command=self.help, bootstyle=INFO)
-        self.canvas.create_window(740, 300, window=self.help_button)
+        self.change_icon_button = ttk.Button(self, text="更改文件夹图标", command=self.change_folder_icon, bootstyle=LIGHT)
+        self.canvas.create_window(603, 250, window=self.change_icon_button)
+
+        self.help_button = ttk.Button(self, text="帮助文档", command=self.help, bootstyle=INFO, width=7)
+        self.canvas.create_window(726, 250, window=self.help_button)
 
     def help(self):
         webbrowser.open("https://exef-star.github.io/lighthouse/help-folder.html")
+
+    def blog(self):
+        webbrowser.open("https://exef-star.github.io/")
 
     def generate_key(self):
         self.key = Fernet.generate_key()
@@ -284,6 +303,24 @@ class FolderEncryptor(ttk.Window):
         shell32 = ctypes.windll.shell32
         shell32.SHChangeNotify(shell32.SHCNE_ASSOCCHANGED, shell32.SHCNF_IDLIST, None, None)
         print("Successfully refreshed folder icon")
+
+    def rename_filename_random(self):
+        folder_path = filedialog.askdirectory()
+        if not folder_path:
+            return
+
+        try:
+            for root, _, files in os.walk(folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    new_file_name = "".join(random.choices(string.ascii_letters + string.digits, k=16)) + os.path.splitext(file)[1]
+                    new_file_path = os.path.join(root, new_file_name)
+                    os.rename(file_path, new_file_path)
+            messagebox.showinfo("完成(●'◡'●)", "文件名已更改为随机字符串")
+            print(f"Successfully renamed file names in folder: {folder_path}")
+        except Exception as e:
+            messagebox.showerror("错误(๑•̀ㅂ•́)و✧", f"更改文件名时出错: {e}")
+            print(f"Failed to rename file names in folder: {folder_path}, error: {e}")
 
 if __name__ == "__main__":
     app = FolderEncryptor()
