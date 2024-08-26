@@ -4,6 +4,8 @@
 
 📒帮助文档：[https://exef-star.github.io/lighthouse/help-folder.html](https://exef-star.github.io/lighthouse/help-folder.html)
 
+📀Bilibili视频：[https://www.bilibili.com/video/BV19msLepEFo/?spm_id_from=333.999.0.0](https://www.bilibili.com/video/BV19msLepEFo/?spm_id_from=333.999.0.0)
+
 软件截图：
 
 ![1](https://s1.imagehub.cc/images/2024/08/20/aae45f42f00b9b491f8a151a29ee6956.png)
