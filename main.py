@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from cryptography.fernet import Fernet, InvalidToken
@@ -30,7 +32,7 @@ class FolderEncryptor(ttk.Window):
 
     def set_background_image(self):
         # 加载图片
-        imgpath = 'background1.png'
+        imgpath = 'background2.png'
         img = Image.open(imgpath)
         img = img.resize((973, 580))
         self.background_image = ImageTk.PhotoImage(img)
